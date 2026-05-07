@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+python-dotenv
+httpx
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
