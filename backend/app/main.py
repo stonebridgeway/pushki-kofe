@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from .database import init_db
 from .routers.menu import router as menu_router
 from .routers.orders import router as orders_router
@@ -29,3 +30,5 @@ app.include_router(orders_router)
 @app.get("/")
 async def root():
     return {"status": "ok"}
+
+app.mount("/app", StaticFiles(directory="/frontend", html=True), name="frontend")

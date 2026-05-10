@@ -1,0 +1,4 @@
+aiogram==3.13.1
+sqlalchemy[asyncio]
+asyncpg
+python-dotenv

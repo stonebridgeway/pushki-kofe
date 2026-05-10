@@ -1,3 +1,43 @@
+## Session: 2026-05-10
+
+DONE:
+- Реализован Telegram Mini App:
+  - frontend раздаётся через FastAPI StaticFiles на `/app`
+  - TMA SDK подключён (`telegram-web-app.js`) в index.html
+  - `API_BASE` → `window.location.origin` (работает и localhost, и ngrok)
+  - TMA init: `tg.expand()` + `tg.ready()` при старте
+  - Имя из Telegram (`initDataUnsafe.user.first_name`) предзаполняет поле заказа
+  - После подтверждения заказа `tg.close()` закрывает Mini App (через 4 сек)
+  - `aiofiles` добавлен в requirements.txt
+- Реализован aiogram бот (Вариант Б):
+  - `/start` → проверяет наличие телефона в БД
+  - Первый визит: запрашивает контакт через ReplyKeyboard (request_contact)
+  - После получения контакта: сохраняет phone в БД, показывает InlineButton "Открыть меню"
+  - Повторный `/start`: сразу показывает кнопку меню
+  - Новая таблица `users` (telegram_id PK, first_name, phone) создаётся бэкендом при старте
+  - Бот работает как отдельный сервис в docker-compose (polling режим)
+
+NEXT:
+- Запустить `docker-compose up --build` — убедиться что 3 контейнера стартуют
+- `ngrok http 8000` → обновить WEBAPP_URL в .env → перезапустить бот
+- Для теста в Telegram: отправить /start боту
+
+FILES_CHANGED:
+- backend/app/models.py [MODIFIED] — добавлена модель User
+- backend/app/database.py [MODIFIED] — init_db импортирует User
+- docker-compose.yml [MODIFIED] — добавлен сервис bot
+- .env [MODIFIED] — добавлена переменная WEBAPP_URL
+- bot/Dockerfile [NEW]
+- bot/requirements.txt [NEW]
+- bot/database.py [NEW]
+- bot/models.py [NEW]
+- bot/bot.py [NEW]
+
+BLOCKERS:
+- WEBAPP_URL в .env нужно заменить на реальный ngrok URL перед тестом в Telegram
+
+---
+
 ## Session: 2026-05-09
 
 DONE:
@@ -31,9 +71,7 @@ DONE:
   - Telegram/Sheets: тихо пропускают ошибки если credentials не заданы (по дизайну)
 
 NEXT:
-- Наполнить меню реальными позициями в Google Sheets "Меню"
-- (опционально) Добавить колонку image в Google Sheets "Меню" с публичными URL фото
-- (опционально) Telegram Mini App
+- Реализовать Telegram Mini Aps
 
 FILES_CHANGED:
 - backend/app/main.py [MODIFIED] — allow_credentials=False

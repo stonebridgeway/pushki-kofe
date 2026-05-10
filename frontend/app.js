@@ -1,5 +1,9 @@
 ﻿(function(){
-  const API_BASE = 'http://localhost:8000';
+  const API_BASE = window.location.origin;
+
+  const tg = window.Telegram?.WebApp ?? null;
+  if (tg) { tg.expand(); tg.ready(); }
+
   const panels = document.querySelectorAll('.catalog-panel');
   const navLinks = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
   const trackedSections = navLinks
@@ -336,7 +340,7 @@
       }
       // clear previous state
       if(orderError){ orderError.textContent = ''; orderError.classList.remove('visible'); }
-      if(orderName) orderName.value = '';
+      if(orderName) orderName.value = tg?.initDataUnsafe?.user?.first_name ?? '';
       if(orderComment) orderComment.value = '';
       setTimeout(() => orderName && orderName.focus(), 80);
     }
@@ -435,6 +439,7 @@
       setTimeout(() => {
         showThankyou();
         updateLoyaltyUI(callsign);
+        if (tg) setTimeout(() => tg.close(), 4000);
       }, 200);
 
     } catch(err){
