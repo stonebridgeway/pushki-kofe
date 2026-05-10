@@ -1,0 +1,661 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUSHKI I KOFE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+    PUSHKI I KOFE
+  </div>
+  <div class="nav-links">
+    <span class="nav-num">01</span><a href="#menu" class="active">МЕНЮ</a>
+    <span class="nav-num">02</span><a href="#missions">МИССИИ</a>
+    <span class="nav-num">03</span><a href="#arsenal">СКЛАД</a>
+    <span class="nav-num">04</span><a href="#about">О НАС</a>
+  </div>
+  <div class="nav-right">
+    <button class="cart-btn" type="button" data-open-cart aria-controls="cartOverlay" aria-expanded="false">
+      🛒
+      <span class="cart-badge" style="display:none">0</span>
+    </button>
+    <button class="order-btn" type="button" data-open-cart aria-controls="cartOverlay" aria-expanded="false">ORDER NOW</button>
+  </div>
+</nav>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay" aria-hidden="true">
+  <div class="cart-backdrop" data-close-cart></div>
+  <aside class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="cart-head">
+      <div>
+        <div class="cart-kicker">ORDER TERMINAL</div>
+        <div class="cart-title" id="cartTitle">КОРЗИНА</div>
+      </div>
+      <button class="cart-close" type="button" data-close-cart aria-label="Закрыть корзину">×</button>
+    </div>
+    <div class="cart-status">
+      <span>STATUS: <strong>OPEN</strong></span>
+      <span id="cartCountText">0 ITEMS</span>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <strong>ПУСТО</strong>
+        Добавь кофе, миссию или экипировку — заказ появится здесь.
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">TOTAL VALUE</span>
+        <span class="cart-total" id="cartTotal">0 ₽</span>
+      </div>
+      <p class="cart-note">Самовывоз · ул. Пролетарская, 1 · Мы свяжемся после подтверждения заказа.</p>
+      <button class="cart-checkout" type="button">ОФОРМИТЬ ЗАКАЗ</button>
+      <button class="cart-clear" type="button" data-clear-cart>ОЧИСТИТЬ КОРЗИНУ</button>
+    </div>
+  </aside>
+</div>
+<div class="cart-toast" id="cartToast">ДОБАВЛЕНО В КОРЗИНУ</div>
+
+<!-- ORDER MODAL -->
+<div class="order-modal-overlay" id="orderModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+  <div class="order-modal">
+    <div class="order-modal-head">
+      <div>
+        <div class="order-modal-kicker">CONFIRM ORDER // TERMINAL</div>
+        <div class="order-modal-title" id="orderModalTitle">ОФОРМИТЬ<br>ЗАКАЗ</div>
+      </div>
+      <button class="order-modal-close" type="button" id="orderModalClose" aria-label="Закрыть">&#215;</button>
+    </div>
+    <div class="order-modal-summary">
+      <span>ПОЗИЦИЙ: <strong id="orderSummaryCount">0</strong></span>
+      <span>ИТОГО: <strong id="orderSummaryTotal">0 ₽</strong></span>
+    </div>
+    <div class="order-modal-body">
+      <div class="order-field">
+        <label class="order-label" for="orderName">ИМЯ / ПОЗЫВНОЙ *</label>
+        <input class="order-input" type="text" id="orderName" name="customer_name"
+          placeholder="КАК К ВАМ ОБРАЩАТЬСЯ..." autocomplete="name" required>
+      </div>
+      <div class="order-field">
+        <label class="order-label" for="orderComment">КОММЕНТАРИЙ К ЗАКАЗУ</label>
+        <textarea class="order-textarea" id="orderComment" name="comment"
+          placeholder="АЛЛЕРГИИ, ПОЖЕЛАНИЯ, ВРЕМЯ САМОВЫВОЗА..."></textarea>
+      </div>
+      <div class="order-error" id="orderError" role="alert"></div>
+      <button class="order-submit" type="button" id="orderSubmit">
+        ПРИНЯТЬ ЗАКАЗ
+        <span class="order-submit-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- THANK YOU OVERLAY -->
+<div class="thankyou-overlay" id="thankyouOverlay" aria-hidden="true">
+  <div class="thankyou-grid"></div>
+  <div class="thankyou-inner">
+    <div class="thankyou-code">MISSION COMPLETE</div>
+    <div class="thankyou-icon">
+      <svg class="thankyou-check" viewBox="0 0 36 36">
+        <polyline points="6,18 14,26 30,10"/>
+      </svg>
+    </div>
+    <div class="thankyou-title">ЗАКАЗ<br>ПРИНЯТ</div>
+    <div class="thankyou-sub" id="thankyouSub">Ваш заказ принят! Ждите.</div>
+    <div class="thankyou-hint">МЫ СВЯЖЕМСЯ С ВАМИ ПО ГОТОВНОСТИ</div>
+
+    <!-- LOYALTY BLOCK — реклама Mini App -->
+    <div class="loyalty-block" id="loyaltyBlock">
+      <div class="loyalty-kicker">ПРОГРАММА ЛОЯЛЬНОСТИ</div>
+      <div class="loyalty-title">БАЛЛЫ — ТОЛЬКО<br>В ТЕЛЕГРАМЕ</div>
+      <div class="loyalty-desc">
+        Заказы через сайт принимаются без баллов.<br>
+        Чтобы копить — делай заказы через <strong>Telegram Mini App</strong>.<br>
+        10-й кофе бесплатно · Сержант получает скидку на арсенал.
+      </div>
+      <a class="loyalty-tg-btn" href="https://t.me/pushki_kofe_bot" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.697l-2.95-.924c-.64-.203-.654-.64.136-.949l11.526-4.444c.537-.194 1.006.131.37.868z"/>
+        </svg>
+        ПРОДОЛЖИТЬ В TELEGRAM
+      </a>
+      <button class="loyalty-skip" id="loyaltySkip">в другой раз →</button>
+    </div>
+
+    <button class="thankyou-back" type="button" id="thankyouBack">&#8592; ВЕРНУТЬСЯ НА БАЗУ</button>
+  </div>
+  <div class="thankyou-bar"><div class="thankyou-bar-fill" id="thankyouBarFill"></div></div>
+</div>
+
+
+<!-- TICKER -->
+<div style="margin-top:56px">
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span>ТАКТИЧЕСКИЙ КОФЕ<span class="tick-sep">✦</span>СТРАЙКБОЛ АМУНИЦИЯ<span class="tick-sep">✦</span>MISSION READY 24/7<span class="tick-sep">✦</span>НОВЫЙ СЕЗОН — НОВОЕ СНАРЯЖЕНИЕ<span class="tick-sep">✦</span>ДВОЙНОЙ ШОТ ЭСПРЕССО<span class="tick-sep">✦</span>PLATE CARRIER В НАЛИЧИИ<span class="tick-sep">✦</span>ЗАРЯДИСЬ НА МИССИЮ<span class="tick-sep">✦</span></span>
+      <span>ТАКТИЧЕСКИЙ КОФЕ<span class="tick-sep">✦</span>СТРАЙКБОЛ АМУНИЦИЯ<span class="tick-sep">✦</span>MISSION READY 24/7<span class="tick-sep">✦</span>НОВЫЙ СЕЗОН — НОВОЕ СНАРЯЖЕНИЕ<span class="tick-sep">✦</span>ДВОЙНОЙ ШОТ ЭСПРЕССО<span class="tick-sep">✦</span>PLATE CARRIER В НАЛИЧИИ<span class="tick-sep">✦</span>ЗАРЯДИСЬ НА МИССИЮ<span class="tick-sep">✦</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  
+  <!-- SVG crosshair decorative -->
+  <svg class="hero-crosshair" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="160" cy="160" r="158" stroke="#C8860A" stroke-width="1"/>
+    <circle cx="160" cy="160" r="80" stroke="#C8860A" stroke-width="1"/>
+    <circle cx="160" cy="160" r="4" fill="#C8860A"/>
+    <line x1="0" y1="160" x2="120" y2="160" stroke="#C8860A" stroke-width="1"/>
+    <line x1="200" y1="160" x2="320" y2="160" stroke="#C8860A" stroke-width="1"/>
+    <line x1="160" y1="0" x2="160" y2="120" stroke="#C8860A" stroke-width="1"/>
+    <line x1="160" y1="200" x2="160" y2="320" stroke="#C8860A" stroke-width="1"/>
+    <text x="168" y="148" fill="#C8860A" font-family="Share Tech Mono" font-size="9" letter-spacing="2">55.7512° N</text>
+    <text x="168" y="178" fill="#C8860A" font-family="Share Tech Mono" font-size="9" letter-spacing="2">37.6184° E</text>
+    <!-- Corner brackets -->
+    <path d="M10 10 L10 30 M10 10 L30 10" stroke="#C8860A" stroke-width="1"/>
+    <path d="M310 10 L310 30 M310 10 L290 10" stroke="#C8860A" stroke-width="1"/>
+    <path d="M10 310 L10 290 M10 310 L30 310" stroke="#C8860A" stroke-width="1"/>
+    <path d="M310 310 L310 290 M310 310 L290 310" stroke="#C8860A" stroke-width="1"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="mission-tag">MISSION CODE: COFFEE-01</div>
+    <div class="hero-coords">COORD: 55.7512° N, 37.6184° E &nbsp;|&nbsp; SYS:OP.READY</div>
+    <h1>ЗАРЯДИСЬ<br>НА<br>МИССИЮ</h1>
+    <p class="hero-desc">Премиальный тактический кофе для тех, кто ценит точность в каждой детали. Дисциплина страйкбола и искусство обжарки — в одной точке сбора.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">МЕНЮ</button>
+      <button class="btn-secondary" onclick="document.getElementById('arsenal').scrollIntoView({behavior:'smooth'})">АРСЕНАЛ ›</button>
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <span class="energy-label">⚡ BASE ENERGY LEVEL</span>
+    <div class="energy-bar"><div class="energy-fill"></div></div>
+    <span class="energy-pct">75%</span>
+    <span class="sys-status">SYS:OP.READY ●●</span>
+  </div>
+</section>
+
+
+
+<!-- MENU SECTION -->
+<section class="menu-section" id="menu">
+  <div class="menu-header">
+    <div>
+      <div class="section-tag">DEPLOYMENT PHASE</div>
+      <div class="section-title">ОПЕРАТИВНОЕ МЕНЮ</div>
+    </div>
+    <div class="view-toggle" data-view-target="#menu-preview-grid" data-view-key="menu-preview" aria-label="Переключатель вида меню">
+      <button class="view-btn active" type="button" data-view="grid" aria-label="Показать меню плиткой" aria-pressed="true">⊞</button>
+      <button class="view-btn" type="button" data-view="list" aria-label="Показать меню списком" aria-pressed="false">☰</button>
+    </div>
+  </div>
+
+  <div class="product-grid" id="menu-preview-grid">
+    <div class="menu-loader" style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--amber);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">ЗАГРУЖАЕМ МЕНЮ...</div>
+  </div>
+
+  <div class="catalog-open-row">
+    <button class="catalog-toggle-btn" data-expand="menu-full" aria-expanded="false">ОТКРЫТЬ ВСЁ МЕНЮ</button>
+    <span class="catalog-open-note">FULL MENU // COFFEE · FOOD · COLD · COMBO</span>
+  </div>
+
+  <div class="catalog-panel" id="menu-full" hidden>
+    <div class="catalog-page-head">
+      <div>
+        <div class="catalog-page-kicker">FULL DEPLOYMENT MENU</div>
+        <div class="catalog-page-title">ПОЛНЫЙ КАТАЛОГ МЕНЮ</div>
+        <p class="catalog-page-desc">Весь ассортимент кофейни. Фильтруй по категории, ищи по названию, добавляй в корзину.</p>
+      </div>
+      <button class="catalog-close-btn" data-close="menu-full">СВЕРНУТЬ</button>
+    </div>
+    <div class="catalog-toolbar">
+      <div class="catalog-tabs" data-tabs="menu-full">
+        <button class="catalog-tab active" data-filter="all">ВСЁ</button>
+        <button class="catalog-tab" data-filter="coffee">КОФЕ</button>
+        <button class="catalog-tab" data-filter="food">ЕДА</button>
+        <button class="catalog-tab" data-filter="cold">ХОЛОДНЫЕ</button>
+        <button class="catalog-tab" data-filter="combo">КОМБО</button>
+      </div>
+      <div class="catalog-tools-right">
+        <input class="catalog-search" data-search="menu-full" type="search" placeholder="ПОИСК ПО МЕНЮ...">
+        <div class="view-toggle view-toggle-sm" data-view-target="#menu-full-grid" data-view-key="menu-full" aria-label="Переключатель вида полного меню">
+          <button class="view-btn active" type="button" data-view="grid" aria-label="Показать полное меню плиткой" aria-pressed="true">⊞</button>
+          <button class="view-btn" type="button" data-view="list" aria-label="Показать полное меню списком" aria-pressed="false">☰</button>
+        </div>
+      </div>
+    </div>
+    <div class="catalog-grid-full" id="menu-full-grid">
+      <div class="menu-loader" style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--amber);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">ЗАГРУЖАЕМ МЕНЮ...</div>
+    </div>
+    <div class="catalog-empty">ПО ЭТОМУ ФИЛЬТРУ НИЧЕГО НЕ НАЙДЕНО</div>
+  </div>
+</section>
+
+<!-- MISSIONS SECTION -->
+<section class="missions-section" id="missions">
+  <div class="missions-inner">
+    <div class="missions-header">
+      <div>
+        <div class="section-tag">MISSION BOARD</div>
+        <div class="section-title">МИССИИ</div>
+        <p class="missions-lead">Готовые наборы под разные сценарии: быстрый заряд перед игрой, плотный перекус после рейда или командный сбор. Выбираешь миссию — получаешь понятный комплект без лишних решений.</p>
+      </div>
+      <div class="section-right-tools">
+        <div class="missions-panel-tag">STATUS: 3 ACTIVE OPERATIONS</div>
+        <div class="view-toggle" data-view-target="#missions-preview-board" data-view-key="missions-preview" aria-label="Переключатель вида миссий">
+          <button class="view-btn active" type="button" data-view="grid" aria-label="Показать миссии карточками" aria-pressed="true">⊞</button>
+          <button class="view-btn" type="button" data-view="list" aria-label="Показать миссии списком" aria-pressed="false">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="missions-layout">
+      <div class="mission-board" id="missions-preview-board">
+        <!-- Mission 1 -->
+        <article class="mission-card">
+          <div class="mission-code">
+            <span class="mission-num">M-01</span>
+            <span class="mission-line"></span>
+            <span class="mission-status">READY</span>
+          </div>
+          <div class="mission-content">
+            <div class="mission-type">FAST DEPLOYMENT // MORNING</div>
+            <div class="mission-name">БЫСТРЫЙ ВЫЛЕТ</div>
+            <p class="mission-desc">Для тех, кто забегает на точку перед делами или игрой. Минимум ожидания, максимум бодрости: кофе в руку — и дальше по маршруту.</p>
+          </div>
+          <div class="mission-loadout">
+            <div>
+              <div class="loadout-title">LOADOUT</div>
+              <div class="loadout-list">
+                <div class="loadout-item"><span>Американо Страйк</span><span>1 шт.</span></div>
+                <div class="loadout-item"><span>Энергетический батончик</span><span>1 шт.</span></div>
+                <div class="loadout-item"><span>Время готовности</span><span>5 мин</span></div>
+              </div>
+            </div>
+            <div class="mission-meta">
+              <span class="mission-price">390 ₽</span>
+              <button class="mission-cta" data-add-cart>ПРИНЯТЬ</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Mission 2 -->
+        <article class="mission-card">
+          <div class="mission-code">
+            <span class="mission-num">M-02</span>
+            <span class="mission-line"></span>
+            <span class="mission-status hot">HOT</span>
+          </div>
+          <div class="mission-content">
+            <div class="mission-type">FULL FOCUS // LUNCH</div>
+            <div class="mission-name">ПОЛЕВОЙ БРИФИНГ</div>
+            <p class="mission-desc">Оптимальный комплект, когда нужен не просто кофе, а нормальная перезагрузка. Подходит для обеда, встречи или подготовки к долгой партии.</p>
+          </div>
+          <div class="mission-loadout">
+            <div>
+              <div class="loadout-title">LOADOUT</div>
+              <div class="loadout-list">
+                <div class="loadout-item"><span>Раф Калибр .50</span><span>1 шт.</span></div>
+                <div class="loadout-item"><span>Сэндвич Тактический</span><span>1 шт.</span></div>
+                <div class="loadout-item"><span>Время готовности</span><span>10 мин</span></div>
+              </div>
+            </div>
+            <div class="mission-meta">
+              <span class="mission-price">790 ₽</span>
+              <button class="mission-cta" data-add-cart>ПРИНЯТЬ</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Mission 3 -->
+        <article class="mission-card">
+          <div class="mission-code">
+            <span class="mission-num">M-03</span>
+            <span class="mission-line"></span>
+            <span class="mission-status">TEAM</span>
+          </div>
+          <div class="mission-content">
+            <div class="mission-type">SQUAD SUPPLY // GROUP</div>
+            <div class="mission-name">КОМАНДНЫЙ СБОР</div>
+            <p class="mission-desc">Набор для небольшой команды: удобно заказать сразу на всех, не собирая корзину вручную. Хорошо работает для тренировок, игр и встреч.</p>
+          </div>
+          <div class="mission-loadout">
+            <div>
+              <div class="loadout-title">LOADOUT</div>
+              <div class="loadout-list">
+                <div class="loadout-item"><span>Кофе на выбор</span><span>4 шт.</span></div>
+                <div class="loadout-item"><span>Снэки / сэндвичи</span><span>4 шт.</span></div>
+                <div class="loadout-item"><span>Предзаказ</span><span>от 20 мин</span></div>
+              </div>
+            </div>
+            <div class="mission-meta">
+              <span class="mission-price">от 1 990 ₽</span>
+              <button class="mission-cta" data-add-cart>СОБРАТЬ</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="mission-sidebar">
+        <div>
+          <div class="sidebar-top-label">ORDER PROTOCOL</div>
+          <div class="sidebar-title">КАК ПРОХОДИТ МИССИЯ</div>
+          <p class="sidebar-text">Меньше выбора — меньше сомнений. Выбери сценарий под свою ситуацию и получи готовый комплект с напитком и едой.</p>
+
+          <div class="protocol-steps">
+            <div class="protocol-step">
+              <div class="protocol-step-num">01</div>
+              <div>
+                <div class="protocol-step-title">ВЫБЕРИ СЦЕНАРИЙ</div>
+                <div class="protocol-step-desc">Быстрый кофе, плотный перекус или комплект на команду.</div>
+              </div>
+            </div>
+            <div class="protocol-step">
+              <div class="protocol-step-num">02</div>
+              <div>
+                <div class="protocol-step-title">ПОДТВЕРДИ ЗАКАЗ</div>
+                <div class="protocol-step-desc">Через корзину, Telegram или у бариста на точке.</div>
+              </div>
+            </div>
+            <div class="protocol-step">
+              <div class="protocol-step-num">03</div>
+              <div>
+                <div class="protocol-step-title">ЗАБЕРИ НА ТОЧКЕ</div>
+                <div class="protocol-step-desc">Заказ готовится заранее, чтобы не терять время перед игрой.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="mission-side-cta catalog-toggle-btn" data-expand="missions-full" aria-expanded="false">ОТКРЫТЬ ВСЕ МИССИИ</button>
+      </aside>
+    </div>
+
+    <div class="mission-stats">
+      <div class="mission-stat">
+        <div class="stat-value">5–20</div>
+        <div class="stat-label">минут на подготовку</div>
+      </div>
+      <div class="mission-stat">
+        <div class="stat-value">6</div>
+        <div class="stat-label">сценариев в полном каталоге</div>
+      </div>
+      <div class="mission-stat">
+        <div class="stat-value">24/7</div>
+        <div class="stat-label">mission ready mood</div>
+      </div>
+    </div>
+
+    <div class="catalog-panel" id="missions-full" hidden>
+      <div class="catalog-page-head">
+        <div>
+          <div class="catalog-page-kicker">FULL MISSION BOARD</div>
+          <div class="catalog-page-title">ВСЕ МИССИИ</div>
+          <p class="catalog-page-desc">Все готовые сценарии заказа в одном месте. Выбери подходящий комплект и добавь в корзину — без лишних решений.</p>
+        </div>
+        <button class="catalog-close-btn" data-close="missions-full">СВЕРНУТЬ</button>
+      </div>
+      <div class="catalog-toolbar">
+        <div class="catalog-tabs" data-tabs="missions-full">
+          <button class="catalog-tab active" data-filter="all">ВСЁ</button>
+          <button class="catalog-tab" data-filter="solo">SOLO</button>
+          <button class="catalog-tab" data-filter="food">FOOD</button>
+          <button class="catalog-tab" data-filter="team">TEAM</button>
+          <button class="catalog-tab" data-filter="event">EVENT</button>
+        </div>
+        <div class="catalog-tools-right">
+        <input class="catalog-search" data-search="missions-full" type="search" placeholder="ПОИСК ПО МИССИЯМ...">
+        <div class="view-toggle view-toggle-sm" data-view-target="#missions-full-grid" data-view-key="missions-full" aria-label="Переключатель вида всех миссий">
+          <button class="view-btn active" type="button" data-view="grid" aria-label="Показать все миссии плиткой" aria-pressed="true">⊞</button>
+          <button class="view-btn" type="button" data-view="list" aria-label="Показать все миссии списком" aria-pressed="false">☰</button>
+        </div>
+      </div>
+      </div>
+      <div class="catalog-grid-full" id="missions-full-grid">
+        <article class="catalog-card" data-category="solo" data-name="быстрый вылет американо батончик утро">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80" alt="Быстрый вылет"><span class="catalog-badge">M-01</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">FAST DEPLOYMENT // 5 MIN</div><div class="catalog-card-name">Быстрый вылет</div><p class="catalog-card-desc">Американо Страйк + энергетический батончик. Для быстрого старта без ожидания.</p><div class="catalog-status-row"><span class="catalog-status">SOLO</span><span class="catalog-status hot">READY</span></div><div class="catalog-card-footer"><span class="catalog-price">390 ₽</span><button class="catalog-add" data-add-cart>ПРИНЯТЬ</button></div></div>
+        </article>
+        <article class="catalog-card" data-category="food" data-name="полевой брифинг раф сэндвич обед">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&q=80" alt="Полевой брифинг"><span class="catalog-badge">M-02</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">FULL FOCUS // 10 MIN</div><div class="catalog-card-name">Полевой брифинг</div><p class="catalog-card-desc">Раф Калибр .50 + Тактический сэндвич. Нормальная перезагрузка в середине дня.</p><div class="catalog-status-row"><span class="catalog-status hot">POPULAR</span><span class="catalog-status">LUNCH</span></div><div class="catalog-card-footer"><span class="catalog-price">790 ₽</span><button class="catalog-add" data-add-cart>ПРИНЯТЬ</button></div></div>
+        </article>
+        <article class="catalog-card" data-category="team" data-name="командный сбор кофе сэндвичи 4 человека">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&q=80" alt="Командный сбор"><span class="catalog-badge">M-03</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">SQUAD SUPPLY // 20 MIN</div><div class="catalog-card-name">Командный сбор</div><p class="catalog-card-desc">4 напитка + 4 перекуса. Быстрый способ закрыть заказ на команду.</p><div class="catalog-status-row"><span class="catalog-status hot">TEAM</span><span class="catalog-status">4 PERSON</span></div><div class="catalog-card-footer"><span class="catalog-price">от 1 990 ₽</span><button class="catalog-add" data-add-cart>СОБРАТЬ</button></div></div>
+        </article>
+        <article class="catalog-card" data-category="solo" data-name="ночной дозор латте брауни вечер">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&q=80" alt="Ночной дозор"><span class="catalog-badge">M-04</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">EVENING // SWEET</div><div class="catalog-card-name">Ночной дозор</div><p class="catalog-card-desc">Латте + брауни. Мягкий вечерний комплект без перегруза.</p><div class="catalog-status-row"><span class="catalog-status">SOLO</span><span class="catalog-status">EVENING</span></div><div class="catalog-card-footer"><span class="catalog-price">470 ₽</span><button class="catalog-add" data-add-cart>ПРИНЯТЬ</button></div></div>
+        </article>
+        <article class="catalog-card" data-category="team" data-name="дуо прикрытие два кофе два десерта">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80" alt="Дуо прикрытие"><span class="catalog-badge">M-05</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">PAIR // 12 MIN</div><div class="catalog-card-name">Дуо прикрытие</div><p class="catalog-card-desc">2 кофе + 2 десерта. Для встречи, короткого созвона или прогулки.</p><div class="catalog-status-row"><span class="catalog-status">2 PERSON</span></div><div class="catalog-card-footer"><span class="catalog-price">от 850 ₽</span><button class="catalog-add" data-add-cart>СОБРАТЬ</button></div></div>
+        </article>
+        <article class="catalog-card" data-category="event" data-name="игровой день предзаказ команда мероприятие">
+          <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=80" alt="Игровой день"><span class="catalog-badge">M-06</span></div>
+          <div class="catalog-card-body"><div class="catalog-card-meta">EVENT // PREORDER</div><div class="catalog-card-name">Игровой день</div><p class="catalog-card-desc">Предзаказ напитков и еды для группы. Удобно для мероприятий и тренировок.</p><div class="catalog-status-row"><span class="catalog-status hot">PREORDER</span><span class="catalog-status">EVENT</span></div><div class="catalog-card-footer"><span class="catalog-price">по запросу</span><button class="catalog-add" data-add-cart>ОБСУДИТЬ</button></div></div>
+        </article>
+      </div>
+      <div class="catalog-empty">ПО ЭТОМУ ФИЛЬТРУ НИЧЕГО НЕ НАЙДЕНО</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION SEPARATOR -->
+<div class="section-sep">
+  <div class="sep-line"></div>
+  <span class="sep-icon">◆ &nbsp;SECTOR TRANSITION&nbsp; ◆</span>
+  <div class="sep-line"></div>
+</div>
+
+<!-- ARSENAL SECTION -->
+<section class="arsenal-section" id="arsenal">
+  <div class="arsenal-header-row">
+    <div>
+      <div class="section-tag">EQUIPMENT SUPPLY</div>
+      <div class="section-title">АРСЕНАЛ</div>
+    </div>
+    <div class="section-right-tools">
+      <div class="auth-badge">AUTH REQ: LEVEL 2</div>
+      <div class="view-toggle" data-view-target="#arsenal-preview-grid" data-view-key="arsenal-preview" aria-label="Переключатель вида арсенала">
+        <button class="view-btn active" type="button" data-view="grid" aria-label="Показать арсенал плиткой" aria-pressed="true">⊞</button>
+        <button class="view-btn" type="button" data-view="list" aria-label="Показать арсенал списком" aria-pressed="false">☰</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="arsenal-grid" id="arsenal-preview-grid">
+    <!-- Arsenal 1 -->
+    <div class="arsenal-card">
+      <div class="arsenal-img">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=320&q=80" alt="Жилет">
+        <span class="arsenal-item-id">ID-VEST-01</span>
+      </div>
+      <div class="arsenal-body">
+        <div class="arsenal-category">PROTECTION // TIER-3</div>
+        <div class="arsenal-name">Жилет Plate Carrier</div>
+        <div class="arsenal-desc">Облегчённая модульная система для активных манёвров. Совместим с MOLLE. Вес: 1.8 кг.</div>
+        <div class="arsenal-footer">
+          <span class="arsenal-price">5 200 ₽</span>
+          <button class="arsenal-add" data-add-cart>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z"/></svg>
+            ДОБАВИТЬ
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Arsenal 2 -->
+    <div class="arsenal-card">
+      <div class="arsenal-img">
+        <img src="https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=320&q=80" alt="Очки">
+        <span class="arsenal-item-id">ID-EYE-PRO</span>
+      </div>
+      <div class="arsenal-body">
+        <div class="arsenal-category">OPTICS // TIER-2</div>
+        <div class="arsenal-name">Очки Ballistic S</div>
+        <div class="arsenal-desc">Превосходная защита и антизапотевающее покрытие. Класс защиты EN166. Ударопрочное стекло.</div>
+        <div class="arsenal-footer">
+          <span class="arsenal-price">1 850 ₽</span>
+          <button class="arsenal-add" data-add-cart>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z"/></svg>
+            ДОБАВИТЬ
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Arsenal 3 -->
+    <div class="arsenal-card">
+      <div class="arsenal-img">
+        <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=320&q=80" alt="Маска">
+        <span class="arsenal-item-id">ID-MASK-X</span>
+      </div>
+      <div class="arsenal-body">
+        <div class="arsenal-category">PROTECTION // TIER-3</div>
+        <div class="arsenal-name">Маска Mesh Steel</div>
+        <div class="arsenal-desc">Надёжная защита лица без потери вентиляции. Стальная сетка, лёгкая рама.</div>
+        <div class="arsenal-footer">
+          <span class="arsenal-price">950 ₽</span>
+          <button class="arsenal-add" data-add-cart>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z"/></svg>
+            ДОБАВИТЬ
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Arsenal 4 -->
+    <div class="arsenal-card">
+      <div class="arsenal-img">
+        <img src="https://images.unsplash.com/photo-1574482620826-40685ca5eef2?w=320&q=80" alt="Шары BB">
+        <span class="arsenal-item-id">ID-AMMO-25</span>
+      </div>
+      <div class="arsenal-body">
+        <div class="arsenal-category">AMMO // TIER-1</div>
+        <div class="arsenal-name">Шары 0.25g Precision</div>
+        <div class="arsenal-desc">Идеальная центровка для максимальной кучности. 2000 шт. в упаковке. Биоразлагаемые.</div>
+        <div class="arsenal-footer">
+          <span class="arsenal-price">1 200 ₽</span>
+          <button class="arsenal-add" data-add-cart>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H13V5H11V11H5V13H11V19H13V13H19V11Z"/></svg>
+            ДОБАВИТЬ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="catalog-open-row">
+    <button class="catalog-toggle-btn" data-expand="arsenal-full" aria-expanded="false">ОТКРЫТЬ ВЕСЬ СКЛАД</button>
+    <span class="catalog-open-note">FULL SUPPLY // PROTECTION · AMMO · ACCESSORIES</span>
+  </div>
+
+  <div class="catalog-panel" id="arsenal-full" hidden>
+    <div class="catalog-page-head">
+      <div>
+        <div class="catalog-page-kicker">FULL EQUIPMENT SUPPLY</div>
+        <div class="catalog-page-title">ПОЛНЫЙ СКЛАД</div>
+        <p class="catalog-page-desc">Вся экипировка и расходники для страйкбола. Фильтруй по категории и добавляй нужное прямо в заказ.</p>
+      </div>
+      <button class="catalog-close-btn" data-close="arsenal-full">СВЕРНУТЬ</button>
+    </div>
+    <div class="catalog-toolbar">
+      <div class="catalog-tabs" data-tabs="arsenal-full">
+        <button class="catalog-tab active" data-filter="all">ВСЁ</button>
+        <button class="catalog-tab" data-filter="protection">ЗАЩИТА</button>
+        <button class="catalog-tab" data-filter="ammo">РАСХОДНИКИ</button>
+        <button class="catalog-tab" data-filter="accessories">АКСЕССУАРЫ</button>
+        <button class="catalog-tab" data-filter="gear">ЭКИПИРОВКА</button>
+      </div>
+      <div class="catalog-tools-right">
+        <input class="catalog-search" data-search="arsenal-full" type="search" placeholder="ПОИСК ПО СКЛАДУ...">
+        <div class="view-toggle view-toggle-sm" data-view-target="#arsenal-full-grid" data-view-key="arsenal-full" aria-label="Переключатель вида полного склада">
+          <button class="view-btn active" type="button" data-view="grid" aria-label="Показать полный склад плиткой" aria-pressed="true">⊞</button>
+          <button class="view-btn" type="button" data-view="list" aria-label="Показать полный склад списком" aria-pressed="false">☰</button>
+        </div>
+      </div>
+    </div>
+    <div class="catalog-grid-full" id="arsenal-full-grid">
+      <article class="catalog-card" data-category="gear" data-name="жилет plate carrier molle разгрузка">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80" alt="Жилет Plate Carrier"><span class="catalog-badge">ID-VEST-01</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">GEAR // MOLLE</div><div class="catalog-card-name">Жилет Plate Carrier</div><p class="catalog-card-desc">Модульная система для активных манёвров. Совместим с MOLLE. Вес: 1.8 кг.</p><div class="catalog-status-row"><span class="catalog-status hot">IN STOCK</span></div><div class="catalog-card-footer"><span class="catalog-price">5 200 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="protection" data-name="очки ballistic защита глаз">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=500&q=80" alt="Очки Ballistic S"><span class="catalog-badge">ID-EYE-PRO</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">PROTECTION // EYE</div><div class="catalog-card-name">Очки Ballistic S</div><p class="catalog-card-desc">Защита глаз с антизапотевающим покрытием и ударопрочным стеклом.</p><div class="catalog-status-row"><span class="catalog-status">EN166</span></div><div class="catalog-card-footer"><span class="catalog-price">1 850 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="protection" data-name="маска mesh steel защита лица">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500&q=80" alt="Маска Mesh Steel"><span class="catalog-badge">ID-MASK-X</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">PROTECTION // FACE</div><div class="catalog-card-name">Маска Mesh Steel</div><p class="catalog-card-desc">Стальная сетка, лёгкая рама и хорошая вентиляция для активной игры.</p><div class="catalog-status-row"><span class="catalog-status hot">POPULAR</span></div><div class="catalog-card-footer"><span class="catalog-price">950 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="ammo" data-name="шары 0.25g precision bb расходники">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1574482620826-40685ca5eef2?w=500&q=80" alt="Шары 0.25g Precision"><span class="catalog-badge">ID-AMMO-25</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">AMMO // BB</div><div class="catalog-card-name">Шары 0.25g Precision</div><p class="catalog-card-desc">2000 шт. в упаковке. Ровная центровка для стабильной траектории.</p><div class="catalog-status-row"><span class="catalog-status">2000 PCS</span></div><div class="catalog-card-footer"><span class="catalog-price">1 200 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="protection" data-name="перчатки tactical grip защита рук">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1520256862855-398228c41684?w=500&q=80" alt="Перчатки Tactical Grip"><span class="catalog-badge">ID-GLOVES</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">PROTECTION // HANDS</div><div class="catalog-card-name">Перчатки Tactical Grip</div><p class="catalog-card-desc">Усиленная ладонь, плотная посадка и нормальный хват для игры.</p><div class="catalog-status-row"><span class="catalog-status">S / M / L</span></div><div class="catalog-card-footer"><span class="catalog-price">1 450 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="gear" data-name="подсумок molle magazine pouch экипировка">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&q=80" alt="Подсумок MOLLE"><span class="catalog-badge">ID-POUCH</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">GEAR // STORAGE</div><div class="catalog-card-name">Подсумок MOLLE</div><p class="catalog-card-desc">Компактный подсумок для расходников и мелких аксессуаров.</p><div class="catalog-status-row"><span class="catalog-status">MODULAR</span></div><div class="catalog-card-footer"><span class="catalog-price">890 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="accessories" data-name="патч callsign шеврон аксессуар">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80" alt="Патч Callsign"><span class="catalog-badge">ID-PATCH</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">ACCESSORY // PATCH</div><div class="catalog-card-name">Патч Callsign</div><p class="catalog-card-desc">Шеврон на липучке для персонализации экипировки.</p><div class="catalog-status-row"><span class="catalog-status">VELCRO</span></div><div class="catalog-card-footer"><span class="catalog-price">350 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+      <article class="catalog-card" data-category="accessories" data-name="карабин ремень страховка аксессуар">
+        <div class="catalog-card-img"><img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=500&q=80" alt="Карабин Utility"><span class="catalog-badge">ID-CARAB</span></div>
+        <div class="catalog-card-body"><div class="catalog-card-meta">ACCESSORY // UTILITY</div><div class="catalog-card-name">Карабин Utility</div><p class="catalog-card-desc">Простой аксессуар для крепления мелочей к рюкзаку или разгрузке.</p><div class="catalog-status-row"><span class="catalog-status">LIGHT</span></div><div class="catalog-card-footer"><span class="catalog-price">290 ₽</span><button class="catalog-add" data-add-cart>ДОБАВИТЬ</button></div></div>
+      </article>
+    </div>
+    <div class="catalog-empty">ПО ЭТОМУ ФИЛЬТРУ НИЧЕГО НЕ НАЙДЕНО</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="about">
+  <div class="footer-brand">
+    <div class="nav-logo" style="margin-bottom:14px">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:#C8860A"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+      PUSHKI I KOFE
+    </div>
+    <div class="footer-copy">© 2026 PUSHKI I KOFE.<br>MISSION READY.<br>Единственное место в городе, где кофе и страйкбол — это норма.</div>
+  </div>
+  <div class="footer-col">
+    <h4>НАВИГАЦИЯ</h4>
+    <a href="#menu">Меню</a>
+    <a href="#missions">Миссии</a>
+    <a href="#arsenal">Арсенал</a>
+  </div>
+  <div class="footer-col">
+    <h4>КОНТАКТЫ</h4>
+    <a href="https://yandex.com/maps/org/pushki_i_kofe/196933164600" target="_blank" rel="noopener">Яндекс Карты</a>
+    <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+    <a href="#" onclick="return false">ВКонтакте</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span class="terminal-ver">SECURE TERMINAL ACCESS V2.4.1 ● ●</span>
+  <span>AUTHORIZED PERSONNEL ONLY</span>
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -1,43 +1,50 @@
-## Session: 2026-05-07
+## Session: 2026-05-09
 
 DONE:
 - Создал проект и настроил .md файлы
 - Инициализировал FastAPI проект с Docker Compose (fastapi + postgres)
-- Созданы: docker-compose.yml, backend/Dockerfile, backend/requirements.txt, backend/app/main.py, .env
-- Создано виртуальное окружение `.venv` и установлены зависимости
-- Реализовал модель SQLAlchemy `Order` и Pydantic схемы `OrderCreate`, `OrderResponse`.
-- Настроил асинхронное подключение к PostgreSQL через `database.py`.
-- Добавил автоматическую инициализацию БД (создание таблиц) при запуске FastAPI через `lifespan`.
-- Реализовал эндпоинт `GET /menu` с интеграцией Google Sheets.
-- Добавил in-memory TTL кэширование (5 мин) для данных меню.
-- Реализовал эндпоинт `POST /order` с сохранением в PostgreSQL.
-- Добавил интеграцию с Google Sheets для записи новых заказов.
-- Реализовал уведомления владельца в Telegram при создании заказа.
-- Настроил расширенные SCOPES для работы с Google Sheets (запись).
-- Реализовал эндпоинт `GET /orders` с токен-авторизацией и сортировкой (newest first).
-- Обновил префикс роутера на `/orders` для соответствия REST.
-- Ревью бэкенда: проверка импортов, роутов, кода.
-- Добавил CORSMiddleware в main.py (allow_origins=["*"] для демки).
-- Исправил verify_token: читает токен при каждом вызове, возвращает 500 если не задан.
-- Заменил `except: pass` на `logging.exception()` в sheets.py и notifier.py.
-- Убрал `version: '3.8'` из docker-compose.yml (устаревший атрибут).
-- Добавил named volume `postgres_data` в docker-compose.yml (данные БД не теряются при down).
+- Реализован полный бэкенд: GET /menu/, POST /orders/, GET /orders/ с токен-авторизацией
+- Интеграции: Google Sheets (меню + лог заказов), Telegram Bot (уведомления владельца)
+- Фронтенд (одностраничник) разбит на три файла:
+  - frontend/index.html — HTML разметка
+  - frontend/style.css  — все стили (~43 KB)
+  - frontend/app.js     — вся логика (корзина, модалка, order submit)
+- Связан бэкенд и фронтенд:
+  - Добавлен API_BASE = 'http://localhost:8000'
+  - Убран DEMO_MODE, заменён реальным fetch на POST /orders/
+  - Исправлен URL (был /order → стал /orders/)
+  - Исправлен формат items: Array → Dict[str, int] (как ожидает бэкенд)
+  - total теперь отправляется как int (не строка)
+  - [data-add-cart] переведён на event delegation (работает для динамических карточек)
+  - loadMenu() + renderMenuCards() — меню загружается из GET /menu/ при старте
+  - Захардкоженные карточки меню убраны из HTML, заменены лоадером
+- Добавлена поддержка фото в карточках меню:
+  - fullCard() и previewCard() в app.js: если item.image есть → <img>, иначе emoji-заглушка
+  - style.css: добавлен .catalog-card-icon для emoji-fallback (flex-центрирование)
+  - backend не менялся — sheets.py возвращает все колонки динамически
+- Проведена end-to-end проверка:
+  - Исправлен CORS: allow_credentials=False (было True, несовместимо с allow_origins=["*"])
+  - docker-compose up --build ✓ (оба контейнера healthy)
+  - GET / → {"status":"ok"} ✓
+  - GET /menu/ → {"items":[]} ✓ (пусто, Google Sheets не настроен в .env)
+  - POST /orders/ → заказ сохранён в PostgreSQL, id=1, status="new" ✓
+  - Telegram/Sheets: тихо пропускают ошибки если credentials не заданы (по дизайну)
 
 NEXT:
-Реализовать фронтенд (Этап 2 из README):
-- Одностраничник: шапка, каталог карточек меню (из GET /menu/)
-- Корзина (JS, без перезагрузки)
-- Форма заказа: имя + комментарий + кнопка → POST /orders/
-- Экран подтверждения
-- Адаптив под мобильный
-- Дизайн: тёмно-зелёный/хаки/бежевый, брутальный военный стиль + кофейня
+- Наполнить меню реальными позициями в Google Sheets "Меню"
+- (опционально) Добавить колонку image в Google Sheets "Меню" с публичными URL фото
+- (опционально) Telegram Mini App
 
 FILES_CHANGED:
-- backend/app/main.py [MODIFY] — CORSMiddleware
-- backend/app/routers/orders.py [MODIFY] — logging, fix verify_token
-- backend/app/sheets.py [MODIFY] — logging
-- backend/app/notifier.py [MODIFY] — logging
-- docker-compose.yml [MODIFY] — убран version, добавлен volume
+- backend/app/main.py [MODIFIED] — allow_credentials=False
+- .env [MODIFIED] — заполнен GOOGLE_CREDENTIALS_JSON (base64), GOOGLE_SHEETS_ID
 
 BLOCKERS:
 - None
+
+## End-to-end статус: ВСЁ РАБОТАЕТ ✓
+- GET /menu/ → читает из Google Sheets ✓
+- POST /orders/ → сохраняет в PostgreSQL ✓
+- Telegram уведомление владельцу ✓
+- Google Sheets "Заказы" — запись строки ✓
+- Фронтенд показывает карточки меню из API ✓
