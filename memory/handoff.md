@@ -3,9 +3,10 @@
 DONE:
 - Репозиторий `stonebridgeway/pushki-kofe` склонирован отдельно в `C:\Users\sacha\Desktop\Учёба\pushki-kofe`.
 - Добавлен `.github/workflows/deploy-pages.yml`: при push в `master` публикуется только `frontend/` через GitHub Actions и GitHub Pages.
+- GitHub Pages включен в режиме GitHub Actions. Deployment `36400510372` завершился успешно; главная страница и файлы CSS/JS отвечают HTTP 200.
 
 NEXT:
-- Проверить успешный Pages deployment после push; URL: `https://stonebridgeway.github.io/pushki-kofe/`.
+- Сайт доступен по адресу `https://stonebridgeway.github.io/pushki-kofe/`.
 - Для рабочего меню и оформления заказов развернуть FastAPI отдельно, настроить CORS и адрес API во фронтенде.
 
 FILES_CHANGED:
