@@ -1,3 +1,23 @@
+# Session: 2026-09-28
+
+DONE:
+- Репозиторий `stonebridgeway/pushki-kofe` склонирован отдельно в `C:\Users\sacha\Desktop\Учёба\pushki-kofe`.
+- Добавлен `.github/workflows/deploy-pages.yml`: при push в `master` публикуется только `frontend/` через GitHub Actions и GitHub Pages.
+
+NEXT:
+- Проверить успешный Pages deployment после push; URL: `https://stonebridgeway.github.io/pushki-kofe/`.
+- Для рабочего меню и оформления заказов развернуть FastAPI отдельно, настроить CORS и адрес API во фронтенде.
+
+FILES_CHANGED:
+- `.github/workflows/deploy-pages.yml` [NEW]
+- `memory/decisions.md` [MODIFIED]
+- `memory/handoff.md` [MODIFIED]
+
+BLOCKERS:
+- GitHub Pages размещает только статический сайт. Сейчас frontend строит API URL от `window.location.origin`, поэтому запросы меню/заказа на Pages не подключатся к FastAPI без отдельного API URL и настройки сервера.
+
+---
+
 ## Session: 2026-05-10
 
 DONE:

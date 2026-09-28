@@ -1,5 +1,10 @@
 # Architecture decisions
 
+## 2026-09-28: Публикация статического frontend через GitHub Pages
+Chosen: GitHub Actions публикует только `frontend/` из ветки `master`.
+Reason: Pages подходит для публичной демонстрации статического сайта и обновляет его автоматически после push.
+Do NOT: размещать FastAPI, PostgreSQL или Telegram-бота на GitHub Pages; для заказов нужен отдельно развернутый API с настроенным адресом и CORS.
+
 ## 2026-05-07: Google Sheets как источник меню
 Chosen: Google Sheets API (read from "Меню" sheet)
 Reason: клиент сам управляет меню без разработчика
